@@ -33,6 +33,14 @@ spec("some feature") {
             }
         }
     }
+    describe("when there's a failure in a post-condition") {
+        after_each() {
+            check(a + b == 6, "Adding %i to %i did not equal %i", a, b, 6);
+        }
+        it("should equal to 6") {
+            a = 4;
+        }
+    }
 
     before_each() {
         a = 3;

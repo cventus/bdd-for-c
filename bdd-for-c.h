@@ -226,14 +226,24 @@ void __bdd_node_flatten_internal__(
             }
         }
 
-        __bdd_array_push__(steps, __bdd_test_step_create__(level, node));
+        __bdd_test_step__ *step = __bdd_test_step_create__(level, node);
+        __bdd_array_push__(steps, step);
 
+        __bdd_test_step__ *last_step = NULL;
         for (size_t listIndex = 0; listIndex < after_each_lists->size; ++listIndex) {
             size_t reverseListIndex = after_each_lists->size - listIndex - 1;
             __bdd_array__ *list = after_each_lists->values[reverseListIndex];
             for (size_t i = 0; i < list->size; ++i) {
-                __bdd_array_push__(steps, __bdd_test_step_create__(level, list->values[i]));
+                last_step = __bdd_test_step_create__(level, list->values[i]);
+                __bdd_array_push__(steps, last_step);
+
             }
+        }
+        if (last_step) {
+            last_step->type = __BDD_NODE_TEST__;
+            last_step->name = step->name;
+            step->type = __BDD_NODE_INTERIM__;
+            step->name = NULL;
         }
         return;
     }
